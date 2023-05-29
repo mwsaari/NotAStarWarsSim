@@ -1,0 +1,148 @@
+﻿@page "/simulator"
+@using NotAStarWarsSim.Client.Services;
+@using NotAStarWarsSim.Shared;
+@inject IPlayerService PlayerService
+@inject NavigationManager NavigationManager
+
+<h3>Attacker</h3>
+<div>
+    <table>
+        <tbody>
+            <tr>
+                <td><label for="a0">@((Fleet.Classifications)0)</label></td>    
+                <td><InputNumber id="a0" @bind-Value="Attacker0" class="form-control" /></td>
+            </tr>
+            <tr>
+                <td><label for="a1">@((Fleet.Classifications)1)</label></td>
+                <td><InputNumber id="a1" @bind-Value="Attacker1" class="form-control" /></td>
+            </tr>                                                           
+            <tr>                                                            
+                <td><label for="a2">@((Fleet.Classifications)2)</label></td>
+                <td><InputNumber id="a2" @bind-Value="Attacker2" class="form-control" /></td>
+            </tr>                                                           
+            <tr>                                                            
+                <td><label for="a3">@((Fleet.Classifications)3)</label></td>
+                <td><InputNumber id="a3" @bind-Value="Attacker3" class="form-control" /></td>
+            </tr>                                                           
+            <tr>                                                            
+                <td><label for="a4">@((Fleet.Classifications)4)</label></td>
+                <td><InputNumber id="a4" @bind-Value="Attacker4" class="form-control" /></td>
+            </tr>                                                           
+            <tr>                                                            
+                <td><label for="a5">@((Fleet.Classifications)5)</label></td>
+                <td><InputNumber id="a5" @bind-Value="Attacker5" class="form-control" /></td>
+            </tr>                                                           
+            <tr>                                                            
+                <td><label for="a6">@((Fleet.Classifications)6)</label></td>
+                <td><InputNumber id="a6" @bind-Value="Attacker6" class="form-control" /></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3>Defender</h3>
+<div>
+    <table>
+        <tbody>
+            <tr>
+                <td><label for="d0">@((Fleet.Classifications)0)</label></td>
+                <td><InputNumber id="d0" @bind-Value="Defender0" class="form-control" /></td>
+            </tr>
+            <tr>
+                <td><label for="d1">@((Fleet.Classifications)1)</label></td>
+                <td><InputNumber id="d1" @bind-Value="Defender1" class="form-control" /></td>
+            </tr>
+            <tr>
+                <td><label for="d2">@((Fleet.Classifications)2)</label></td>
+                <td><InputNumber id="d2" @bind-Value="Defender2" class="form-control" /></td>
+            </tr>
+            <tr>
+                <td><label for="d3">@((Fleet.Classifications)3)</label></td>
+                <td><InputNumber id="d3" @bind-Value="Defender3" class="form-control" /></td>
+            </tr>
+            <tr>
+                <td><label for="d4">@((Fleet.Classifications)4)</label></td>
+                <td><InputNumber id="d4" @bind-Value="Defender4" class="form-control" /></td>
+            </tr>
+            <tr>
+                <td><label for="d5">@((Fleet.Classifications)5)</label></td>
+                <td><InputNumber id="d5" @bind-Value="Defender5" class="form-control" /></td>
+            </tr>
+            <tr>
+                <td><label for="d6">@((Fleet.Classifications)6)</label></td>
+                <td><InputNumber id="d6" @bind-Value="Defender6" class="form-control" /></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<button type="submit" class="btn btn-primary" @onclick="HandleSubmit">Simulate</button>
+
+@if (Results is not null)
+{
+    <h3>Results</h3>
+    <table>
+        <thead>
+            <tr>
+                <td>Results</td>
+            </tr>
+            <tr>
+                <td>Ship Class</td>
+                <td>Attacker</td>
+                <td>Defender</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Fleet.Classifications shipType in Enum.GetValues(typeof(Fleet.Classifications)))
+            {
+                <tr>
+                    <td>@shipType</td>
+                    <td>@Results.Item1.Forces[shipType]</td>
+                    <td>@Results.Item2.Forces[shipType]</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public Tuple<int[], int[]> Combattants { get; }
+    public Tuple<Fleet, Fleet>? Results { get; set; }
+
+    public int Attacker0 { get; set; }
+    public int Attacker1 { get; set; }
+    public int Attacker2 { get; set; }
+    public int Attacker3 { get; set; }
+    public int Attacker4 { get; set; }
+    public int Attacker5 { get; set; }
+    public int Attacker6 { get; set; }
+
+    public int Defender0 { get; set; }
+    public int Defender1 { get; set; }
+    public int Defender2 { get; set; }
+    public int Defender3 { get; set; }
+    public int Defender4 { get; set; }
+    public int Defender5 { get; set; }
+    public int Defender6 { get; set; }
+
+    public void HandleSubmit()
+    {
+        var attacker = new Fleet();
+        attacker.Forces[(Fleet.Classifications)0] = Attacker0;
+        attacker.Forces[(Fleet.Classifications)1] = Attacker1;
+        attacker.Forces[(Fleet.Classifications)2] = Attacker2;
+        attacker.Forces[(Fleet.Classifications)3] = Attacker3;
+        attacker.Forces[(Fleet.Classifications)4] = Attacker4;
+        attacker.Forces[(Fleet.Classifications)5] = Attacker5;
+        attacker.Forces[(Fleet.Classifications)6] = Attacker6;
+        var defender = new Fleet();
+        defender.Forces[(Fleet.Classifications)0] = Defender0;
+        defender.Forces[(Fleet.Classifications)1] = Defender1;
+        defender.Forces[(Fleet.Classifications)2] = Defender2;
+        defender.Forces[(Fleet.Classifications)3] = Defender3;
+        defender.Forces[(Fleet.Classifications)4] = Defender4;
+        defender.Forces[(Fleet.Classifications)5] = Defender5;
+        defender.Forces[(Fleet.Classifications)6] = Defender6;
+
+        Results = Battle.GetResults(Tuple.Create(attacker, defender));
+    }
+}

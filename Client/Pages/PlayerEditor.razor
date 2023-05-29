@@ -1,0 +1,106 @@
+﻿@page "/player"
+@page "/player/{id:guid}"
+@using NotAStarWarsSim.Client.Services;
+@using NotAStarWarsSim.Shared;
+@inject IPlayerService PlayerService
+@inject NavigationManager NavigationManager
+
+
+@if(Player == null)
+{
+	<PageTitle>Loading</PageTitle>
+	<h3>Loading</h3>
+}
+else
+{
+	@if (Id == null)
+	{
+		<PageTitle>Create a new universe</PageTitle>
+		<h3>TBD</h3>
+	}
+	else
+	{
+		<PageTitle>Edit @Player.Username</PageTitle>
+		<h3>Edit @Player.Username</h3>
+	}
+
+	<EditForm Model="Player" OnSubmit="HandleSubmit">
+		<div>
+			<label for="name">Username</label>
+			<InputText id="name" @bind-Value="Player.Username" class="form-control"/>
+		</div>
+		<br />
+		<table>
+			<thead>
+				<tr>
+					<td>Planets</td>
+				</tr>
+				<tr>
+					<td>Name</td>
+					<td>Location</td>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach(var planet in Player.Planets)
+				{
+					<tr>
+						<td>@planet.DisplayName</td>
+						<td>@planet.Location</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		<br />
+		<br />
+		<button type="submit" class="btn btn-primary">@SubmitText</button>
+		<button type="button" class="btn btn-danger" @onclick="DeleteUniverse">@DeleteText</button>
+	</EditForm>
+}
+
+@code{						
+	[Parameter]
+	public Guid? Id { get; set; }
+	public string SubmitText { get; set; } = string.Empty;
+	public string DeleteText { get; set; } = string.Empty;
+	public Player? Player { get; set; }
+
+	protected override void OnInitialized()
+	{
+		SubmitText = Id is null ? "Create" : "Save";
+		DeleteText = Id is null ? "Cancel" : "Delete Player";
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Id != null)
+		{
+			Player = await PlayerService.GetPlayerAsync((Guid)Id);
+		}
+		else
+		{
+			Player = new Player();
+		}
+	}
+
+	async Task HandleSubmit()
+	{
+		if (Id is null)
+		{
+			await PlayerService.CreatePlayerAsync(Player);
+		}
+		else
+		{
+			await PlayerService.UpdatePlayerAsync(Player);
+		}
+	}
+
+	async Task DeleteUniverse()
+	{
+		if (Id is not null)
+		{
+			await PlayerService.DeletePlayerAsync((Guid)Id);
+		}
+
+		NavigationManager.NavigateTo("players");
+	}
+}

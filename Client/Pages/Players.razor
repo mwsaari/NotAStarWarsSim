@@ -1,0 +1,47 @@
+﻿@page "/players"
+@using NotAStarWarsSim.Client.Services;
+@inject IPlayerService PlayerService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Players</PageTitle>
+
+<h3>Players</h3>
+
+<table>
+	<thead>
+		<tr>
+			<th>Username</th>
+			<th>Planets</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var player in PlayerService.Players)
+		{
+			<tr>
+				<td>@player.Username</td>
+				<td>@player.Planets.Count</td>
+				<td>
+					<button class="btn btn-primary" @onclick="(() => ShowPlayer(player.Id))"><i class="oi oioi-pencil"></i></button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<button type="button" class="btn btn-primary" @onclick="CreateNewPlayer">Create new Player</button>
+
+@code {	
+	protected override async Task OnInitializedAsync()
+	{
+		await PlayerService.GetPlayersAsync();
+	}
+
+	void ShowPlayer(Guid Id)
+	{
+		NavigationManager.NavigateTo($"player/{Id}");
+	}
+
+	void CreateNewPlayer()
+	{
+		NavigationManager.NavigateTo($"player");
+	}
+}
