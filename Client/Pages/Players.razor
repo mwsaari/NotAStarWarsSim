@@ -1,5 +1,6 @@
 ﻿@page "/players"
 @using NotAStarWarsSim.Client.Services;
+@using NotAStarWarsSim.Shared;
 @inject IPlayerService PlayerService
 @inject NavigationManager NavigationManager
 
@@ -15,24 +16,32 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var player in PlayerService.Players)
+		@if(AllPlayers is null)
 		{
-			<tr>
-				<td>@player.Username</td>
-				<td>@player.Planets.Count</td>
-				<td>
-					<button class="btn btn-primary" @onclick="(() => ShowPlayer(player.Id))"><i class="oi oioi-pencil"></i></button>
-				</td>
-			</tr>
+			<tr>Loading...</tr>
+		}
+		else{
+			@foreach (var player in AllPlayers)
+			{
+				<tr>
+					<td>@player.Username</td>
+					<td>@player.Planets.Count</td>
+					<td>
+						<button class="btn btn-primary" @onclick="(() => ShowPlayer(player.Id))"><i class="oi oioi-pencil"></i></button>
+					</td>
+				</tr>
+			}
 		}
 	</tbody>
 </table>
 <button type="button" class="btn btn-primary" @onclick="CreateNewPlayer">Create new Player</button>
 
-@code {	
+@code {
+	ICollection<Player>? AllPlayers { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
-		await PlayerService.GetPlayersAsync();
+		AllPlayers = await PlayerService.GetPlayersAsync();
 	}
 
 	void ShowPlayer(Guid Id)
