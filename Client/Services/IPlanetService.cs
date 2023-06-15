@@ -2,10 +2,9 @@
 
 namespace NotAStarWarsSim.Client.Services
 {
-    public interface IPlanetService
-    {
-        Task<ICollection<Planet>> GetPlanetsAsync();
-        Task<ICollection<Planet>> GetPlanetOfPlayer(Player player);
-        Task<Planet> GetPlanetAsync(Guid id);
-    }
+	public interface IPlanetService
+	{
+		Task<ICollection<Planet>> GetPlanetsAsync();
+		Task<Planet> GetPlanetAsync(Guid id);
+	}
 }

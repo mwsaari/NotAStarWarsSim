@@ -4,7 +4,7 @@
 	{
 		public static Tuple<Fleet, Fleet> GetResults(Tuple<Fleet, Fleet> combattants)
 		{
-			while (combattants.Item1.Strenght != 0 && combattants.Item2.Strenght != 0)
+			while (combattants.Item1.Strength != 0 && combattants.Item2.Strength != 0)
 			{
 				Tick(combattants);
 			}
@@ -42,6 +42,10 @@
 			}
 			if (classification == Fleet.Classifications.Bomber)
 			{
+				if (offense.Forces[Fleet.Classifications.Bomber] + offense.Forces[Fleet.Classifications.Fighter] <= defense.Forces[Fleet.Classifications.Fighter])
+				{
+					return;
+				}
 				for (Fleet.Classifications i = Fleet.Classifications.Dreadnaught; i >= Fleet.Classifications.Corvette; i--)
 				{
 					if (defense.Forces[i] != 0)

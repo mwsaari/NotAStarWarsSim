@@ -1,0 +1,32 @@
+﻿@page "/galaxy"
+@inject IPlanetService PlanetService
+
+<h3>Galaxy</h3>
+<img @ref="_planetImage" hidden src="/Planets/star_blue01.png" />
+
+<div class="my-main" style="border-style: solid;height: 900px;width: 900px">
+    <BECanvas Width="900" Height="900" @ref="_canvasReference">
+    </BECanvas>
+</div>
+
+@code {
+    ElementReference _planetImage;
+    BECanvasComponent _canvasReference;
+    Canvas2DContext _context;
+
+    ICollection<Planet> Planets { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Planets = await PlanetService.GetPlanetsAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            _context = await _canvasReference.CreateCanvas2DAsync();
+            await _context.DrawImageAsync(_planetImage, 50, 50, 10, 10);
+        }
+    }
+}
