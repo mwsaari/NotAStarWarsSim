@@ -1,18 +1,27 @@
 ﻿@page "/galaxy"
+@using System.Drawing
 @inject IPlanetService PlanetService
 
 <h3>Galaxy</h3>
-<img @ref="_planetImage" hidden src="/Planets/star_blue01.png" />
+<img @ref="_planetImage" hidden src="/favicon.png" />
 
-<div class="my-main" style="border-style: solid;height: 900px;width: 900px">
-    <BECanvas Width="900" Height="900" @ref="_canvasReference">
+<div class="canvas" style="border-style: solid;width: 500px; height: 500px">
+    <BECanvas @ref="_canvasReference">
     </BECanvas>
+</div>
+<div class="my-main" style="border-style: solid;width: 500px; height: 500px">
+    <Panzoom @ref="_panzoom">
+        <div @ref="@context.ElementReference" class="panzoom">
+            <img style="width: 400px; height: 400px" src="/Planets/star_blue01.png" alt="image" />
+        </div>
+    </Panzoom>
 </div>
 
 @code {
     ElementReference _planetImage;
     BECanvasComponent _canvasReference;
     Canvas2DContext _context;
+    Panzoom _panzoom;
 
     ICollection<Planet> Planets { get; set; }
 
@@ -23,10 +32,12 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if(!firstRender)
         {
-            _context = await _canvasReference.CreateCanvas2DAsync();
-            await _context.DrawImageAsync(_planetImage, 50, 50, 10, 10);
+            return;
         }
+
+        _context = await _canvasReference.CreateCanvas2DAsync();
+        await _context.DrawImageAsync(_planetImage, 0, 0, 400, 400);
     }
 }
